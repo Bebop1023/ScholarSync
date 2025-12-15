@@ -31,3 +31,29 @@ def add_expense(amount, category, note=""):
     }
     expenses.append(expense_entry)
     save_expenses(expenses)
+
+
+def get_expense_summary():
+    """
+    Calculate total spending and spending by category.
+    """
+    expenses = load_expenses()
+
+    total = 0
+    by_category = {}
+
+    for exp in expenses:
+        amount = exp["amount"]
+        category = exp["category"]
+
+        total += amount
+
+        if category in by_category:
+            by_category[category] += amount
+        else:
+            by_category[category] = amount
+
+    return {
+        "total": total,
+        "by_category": by_category
+    }

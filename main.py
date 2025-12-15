@@ -1,9 +1,10 @@
-from core.expenses import add_expense, load_expenses
+from core.expenses import add_expense, load_expenses, get_expense_summary
 
 def show_menu():
     print("ScholarSync Expense Tracker")
     print("1. Log Expense")
     print("2. View Expenses")
+    print("3. View Expense Summary")
     print("0. Exit")
 
 def log_expense():
@@ -31,6 +32,18 @@ def view_expenses():
     print("Recorded Expenses:")
     for idx, expense in enumerate(expenses, start=1):
         print(f"{idx}. {expense['date']} - {expense['category']}: ${expense['amount']} ({expense['note']})")
+
+
+def view_summary():
+    summary = get_expense_summary()
+
+    print("\n--- Expense Summary ---")
+    print(f"Total spent: ${summary['total']:.2f}")
+
+    print("\nBy Category:")
+    for category, amount in summary["by_category"].items():
+        print(f"- {category}: ${amount:.2f}")
+
     
 def main():
     while True:
@@ -42,6 +55,8 @@ def main():
             view_expenses()
         elif choice == "0":
             print("Exiting ScholarSync Expense Tracker.")
+        elif choice == "3":
+            view_summary()
             break
         else:
             print("Invalid choice. Please try again.")
