@@ -8,13 +8,19 @@ def show_menu():
 
 def log_expense():
     try:
-        amount = float(input("Enter expense amount: "))
-        category = input("Enter expense category: ")
-        note = input("Enter a note (optional): ")
+        raw_amount = input("Enter amount (e.g. 12.50 or $12.50): ")
+        cleaned_amount = raw_amount.replace("$", "").strip()
+        amount = float(cleaned_amount)
+
+        category = input("Enter category (Food, Transport, etc): ")
+        note = input("Optional note: ")
+
         add_expense(amount, category, note)
-        print("Expense logged successfully.")
+        print("✅ Expense saved.")
+
     except ValueError:
-        print("Invalid amount. Please enter a numeric value.")
+        print("❌ Invalid amount. Please enter a valid number.")
+
 
 
 def view_expenses():
