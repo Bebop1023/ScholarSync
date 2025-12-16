@@ -25,7 +25,7 @@ def create_habit(name):
         if habit["name"].lower() == name.lower():
             return False  # Habit already exists
         
-    habit.append({
+    habits.append({
         "name": name,
         "completed_dates": []
     })

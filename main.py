@@ -1,14 +1,14 @@
 from core.expenses import add_expense, load_expenses, get_expense_summary
-
 from core.habits import (
-    create_habit,
+    create_habit as create_habit_logic,
     complete_habit,
     load_habits,
     calculate_streak
 )
 
+
 def show_menu():
-    print("ScholarSync Expense Tracker")
+    print("\n=== ScholarSync ===")
     print("1. Log Expense")
     print("2. View Expenses")
     print("3. View Expense Summary")
@@ -16,6 +16,9 @@ def show_menu():
     print("5. Complete Habit")
     print("6. View Habits")
     print("0. Exit")
+
+
+# -------------------- EXPENSES --------------------
 
 def log_expense():
     try:
@@ -33,15 +36,16 @@ def log_expense():
         print("❌ Invalid amount. Please enter a valid number.")
 
 
-
 def view_expenses():
     expenses = load_expenses()
+
     if not expenses:
-        print("No expenses recorded.")
+        print("No expenses recorded yet.")
         return
-    print("Recorded Expenses:")
-    for idx, expense in enumerate(expenses, start=1):
-        print(f"{idx}. {expense['date']} - {expense['category']}: ${expense['amount']} ({expense['note']})")
+
+    print("\n--- Expenses ---")
+    for exp in expenses:
+        print(f"{exp['date']} | ${exp['amount']:.2f} | {exp['category']} | {exp['note']}")
 
 
 def view_summary():
@@ -50,51 +54,73 @@ def view_summary():
     print("\n--- Expense Summary ---")
     print(f"Total spent: ${summary['total']:.2f}")
 
+    if not summary["by_category"]:
+        print("No expenses yet.")
+        return
+
     print("\nBy Category:")
     for category, amount in summary["by_category"].items():
         print(f"- {category}: ${amount:.2f}")
 
-def create_habit():
-    name = input("Enter habit name: ")
-    frequency = input("Enter frequency (daily, weekly): ")
-    create_habit(name, frequency)
-    print("✅ Habit created.")
 
-def complete_habit():
-    name = input("Enter habit name to complete: ")
-    complete_habit(name)
-    print("✅ Habit completed.")
+# -------------------- HABITS --------------------
+
+def add_habit():
+    name = input("Enter habit name: ")
+
+    if create_habit_logic(name):
+        print("✅ Habit created.")
+    else:
+        print("⚠️ Habit already exists.")
+
+
+def mark_habit():
+    name = input("Enter habit name to mark complete: ")
+
+    if complete_habit(name):
+        print("✅ Habit marked complete for today.")
+    else:
+        print("❌ Habit not found.")
+
 
 def view_habits():
     habits = load_habits()
+
     if not habits:
-        print("No habits recorded.")
+        print("No habits created yet.")
         return
+
+    print("\n--- Habits ---")
     for habit in habits:
-        streak = calculate_streak(habit["name"])
-        print(f"- {habit['name']} ({habit['frequency']}) | Streak: {streak}")
+        streak = calculate_streak(habit["completed_dates"])
+        print(f"{habit['name']} | Streak: {streak} day(s)")
+
+
+# -------------------- MAIN LOOP --------------------
 
 def main():
     while True:
         show_menu()
         choice = input("Select an option: ")
+
         if choice == "1":
             log_expense()
         elif choice == "2":
             view_expenses()
+        elif choice == "3":
+            view_summary()
         elif choice == "4":
-            create_habit()
+            add_habit()
         elif choice == "5":
-            complete_habit()
+            mark_habit()
         elif choice == "6":
             view_habits()
         elif choice == "0":
-            print("Exiting ScholarSync Expense Tracker.")
-        elif choice == "3":
-            view_summary()
+            print("Goodbye!")
             break
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid option.")
+
 
 if __name__ == "__main__":
     main()
