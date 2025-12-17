@@ -5,6 +5,9 @@ from core.habits import (
     load_habits,
     calculate_streak
 )
+from core.schedule import add_course, add_assignment, get_upcoming_assignments
+from core.reminders import get_assignment_reminders, get_today_classes
+
 
 
 def show_menu():
@@ -15,6 +18,9 @@ def show_menu():
     print("4. Create Habit")
     print("5. Complete Habit")
     print("6. View Habits")
+    print("7. Add Course")
+    print("8. Add Assignment")
+    print("9. View Upcoming Assignments")
     print("0. Exit")
 
 
@@ -95,6 +101,66 @@ def view_habits():
         streak = calculate_streak(habit["completed_dates"])
         print(f"{habit['name']} | Streak: {streak} day(s)")
 
+# -------------------- SCHEDULE --------------------
+
+def add_course_cli():
+    name = input("Course name: ")
+    days = input("Days (e.g. Mon/Wed/Fri): ")
+
+    hour = input("Start hour (1-12): ")
+    minute = input("Start minute (00 or 30): ")
+    am_pm = input("AM or PM: ").upper()
+    duration = input("Duration in minutes: ")
+
+    try:
+        start_time = f"{int(hour)}:{minute.zfill(2)} {am_pm}"
+        duration_minutes = int(duration)
+
+        add_course(name, days, start_time, duration_minutes)
+        print("✅ Course added.")
+
+    except ValueError:
+        print("❌ Invalid time input. Please try again.")
+
+
+
+def add_assignment_cli():
+    course = input("Course name: ")
+    title = input("Assignment title: ")
+    due_date = input("Due date (YYYY-MM-DD): ")
+
+    add_assignment(course, title, due_date)
+    print("✅ Assignment added.")
+
+
+def view_assignments():
+    assignments = get_upcoming_assignments()
+
+    if not assignments:
+        print("No upcoming assignments.")
+        return
+
+    print("\n--- Upcoming Assignments ---")
+    for a in assignments:
+        print(f"{a['due_date']} | {a['course']} | {a['title']}")
+# -------------------- REMINDERS --------------------
+
+def show_reminders():
+    print("\n🔔 Reminders")
+
+    assignment_reminders = get_assignment_reminders()
+    class_reminders = get_today_classes()
+
+    if not assignment_reminders and not class_reminders:
+        print("No reminders right now.")
+        return
+
+    for reminder in assignment_reminders:
+        print(reminder)
+
+    for reminder in class_reminders:
+        print(reminder)
+
 
 # -------------------- MAIN LOOP --------------------
 
@@ -115,6 +181,12 @@ def main():
             mark_habit()
         elif choice == "6":
             view_habits()
+        elif choice == "7":
+            add_course_cli()
+        elif choice =="8":
+            add_assignment_cli()
+        elif choice == "9":
+            view_assignments()
         elif choice == "0":
             print("Goodbye!")
             break

@@ -4,5 +4,9 @@
         "completed_dates": [
             "2025-12-16"
         ]
+    },
+    {
+        "name": "Night Owl",
+        "completed_dates": []
     }
 ]

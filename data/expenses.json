@@ -4,5 +4,17 @@
         "category": "bill",
         "note": "water",
         "date": "2025-12-15T16:29:22.658668"
+    },
+    {
+        "amount": 50.0,
+        "category": "Bus",
+        "note": "ticket",
+        "date": "2025-12-16T13:34:06.394851"
+    },
+    {
+        "amount": 0.0,
+        "category": "Food",
+        "note": "yum",
+        "date": "2025-12-16T13:34:42.627578"
     }
 ]
