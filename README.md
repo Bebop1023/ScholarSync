@@ -76,3 +76,17 @@ Clone the repository:
 git clone https://github.com/yourusername/ScholarSync.git
 cd ScholarSync
 
+Set up Environment:
+python3.11 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+Create a .env file:
+OPENAI_API_KEY=your_api_key_here
+
+Run the app:
+python3 main.py
+
+
+
+
