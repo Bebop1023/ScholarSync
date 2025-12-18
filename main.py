@@ -5,8 +5,9 @@ from core.habits import (
     load_habits,
     calculate_streak
 )
-from core.schedule import add_course, add_assignment, get_upcoming_assignments
+from core.schedule import add_course, add_assignment, get_upcoming_assignments, load_schedule
 from core.reminders import get_assignment_reminders, get_today_classes
+from ai.llm_advisor import get_student_advice
 
 
 
@@ -21,6 +22,7 @@ def show_menu():
     print("7. Add Course")
     print("8. Add Assignment")
     print("9. View Upcoming Assignments")
+    print("10. Get AI Advice")
     print("0. Exit")
 
 
@@ -161,6 +163,45 @@ def show_reminders():
     for reminder in class_reminders:
         print(reminder)
 
+#---------------------AI INTEGRATION-----------------
+def get_ai_advice():
+    print("\n🤖 Generating AI advice...\n")
+    summary = build_llm_summary()
+    advice = get_student_advice(summary)
+    print(advice)
+
+
+def build_llm_summary():
+    expense_summary = get_expense_summary()
+    habits = load_habits()
+    schedule = load_schedule()
+
+    summary = []
+
+    summary.append("Expense Summary:")
+    summary.append(f"Total spent: ${expense_summary['total']:.2f}")
+
+    for category, amount in expense_summary["by_category"].items():
+        summary.append(f"- {category}: ${amount:.2f}")
+
+    summary.append("\nHabits:")
+    if not habits:
+        summary.append("No habits tracked yet.")
+    else:
+        for habit in habits:
+            streak = calculate_streak(habit["completed_dates"])
+            summary.append(f"- {habit['name']}: {streak}-day streak")
+
+    summary.append("\nUpcoming Assignments:")
+    if not schedule["assignments"]:
+        summary.append("None")
+    else:
+        for a in schedule["assignments"]:
+            summary.append(
+                f"- {a['title']} for {a['course']} due {a['due_date']}"
+            )
+
+    return "\n".join(summary)
 
 # -------------------- MAIN LOOP --------------------
 
@@ -187,6 +228,8 @@ def main():
             add_assignment_cli()
         elif choice == "9":
             view_assignments()
+        elif choice == "10":
+            get_ai_advice()
         elif choice == "0":
             print("Goodbye!")
             break

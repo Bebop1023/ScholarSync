@@ -1,20 +1,41 @@
-"""
-llm_advisor.py
+import os
+from dotenv import load_dotenv
+from openai import OpenAI, RateLimitError
 
-This module handles interaction with a Large Language Model (LLM)
-to generate personalized advice for students based on their data.
-"""
+# Load environment variables from .env
+load_dotenv()
+
+# Initialize OpenAI client ONCE
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 def get_student_advice(summary_text: str) -> str:
     """
-    Sends summarized student data to an LLM and returns advice.
-
-    Args:
-        summary_text (str): A formatted summary of student data
-
-    Returns:
-        str: LLM-generated advice
+    Send summarized student data to the LLM and return advice.
     """
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a helpful student advisor. "
+                        "Give concise, actionable advice based on the data."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": summary_text
+                }
+            ],
+            max_tokens=200
+        )
 
-    # Placeholder response (LLM integration coming next)
-    return "LLM advice feature is not yet connected."
+        return response.choices[0].message.content.strip()
+
+    except RateLimitError:
+        return (
+            "⚠️ AI advice is temporarily unavailable due to usage limits. "
+            "Please try again later."
+        )
